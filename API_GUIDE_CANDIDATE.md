@@ -5,7 +5,7 @@ Welcome! This guide will help you consume the Analytics Engineer Invoice API for
 ## 🔗 Base URL
 
 ```
-http://localhost:8000
+https://demandlane-analytics-engineer.recursive-tech.site
 ```
 
 > **Note**: The backend server is already running. You don't need to set it up.
@@ -26,9 +26,6 @@ All API endpoints require Bearer Token authentication using JWT (JSON Web Tokens
 - **Candidate Account**: 
   - Username: `candidate`
   - Password: `test123`
-- **Admin Account** (for user management):
-  - Username: `admin`
-  - Password: `admin123`
 
 **Request Body:**
 ```json
@@ -40,7 +37,7 @@ All API endpoints require Bearer Token authentication using JWT (JSON Web Tokens
 
 **Example using cURL:**
 ```bash
-curl -X POST "http://localhost:8000/auth/token" \
+curl -X POST "https://demandlane-analytics-engineer.recursive-tech.site/auth/token" \
   -H "Content-Type: application/json" \
   -d '{"username": "candidate", "password": "test123"}'
 ```
@@ -50,7 +47,7 @@ curl -X POST "http://localhost:8000/auth/token" \
 import requests
 
 response = requests.post(
-    "http://localhost:8000/auth/token",
+    "https://demandlane-analytics-engineer.recursive-tech.site/auth/token",
     json={"username": "candidate", "password": "test123"}
 )
 
@@ -79,7 +76,7 @@ Authorization: Bearer <your_access_token>
 
 **Example using cURL:**
 ```bash
-curl -X GET "http://localhost:8000/invoices/stored?page=1&page_size=100" \
+curl -X GET "https://demandlane-analytics-engineer.recursive-tech.site/invoices/stored?page=1&page_size=100" \
   -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 ```
 
@@ -92,7 +89,7 @@ headers = {
 }
 
 response = requests.get(
-    "http://localhost:8000/invoices/stored",
+    "https://demandlane-analytics-engineer.recursive-tech.site/invoices/stored",
     headers=headers,
     params={"page": 1, "page_size": 100}
 )
@@ -149,7 +146,7 @@ import requests
 
 # Get access token first
 auth_response = requests.post(
-    "http://localhost:8000/auth/token",
+    "https://demandlane-analytics-engineer.recursive-tech.site/auth/token",
     json={"username": "candidate", "password": "test123"}
 )
 access_token = auth_response.json()["access_token"]
@@ -165,7 +162,7 @@ page_size = 100
 
 while True:
     response = requests.get(
-        "http://localhost:8000/invoices/stored",
+        "https://demandlane-analytics-engineer.recursive-tech.site/invoices/stored",
         headers=headers,
         params={"page": page, "page_size": page_size}
     )
@@ -195,7 +192,7 @@ import pandas as pd
 
 # Get access token
 auth_response = requests.post(
-    "http://localhost:8000/auth/token",
+    "https://demandlane-analytics-engineer.recursive-tech.site/auth/token",
     json={"username": "candidate", "password": "test123"}
 )
 access_token = auth_response.json()["access_token"]
@@ -206,7 +203,7 @@ headers = {
 
 # Fetch first page
 response = requests.get(
-    "http://localhost:8000/invoices/stored",
+    "https://demandlane-analytics-engineer.recursive-tech.site/invoices/stored",
     headers=headers,
     params={"page": 1, "page_size": 500}  # Max allowed per request
 )
@@ -225,7 +222,7 @@ const axios = require('axios');
 
 async function fetchInvoices() {
   // Get access token
-  const authResponse = await axios.post('http://localhost:8000/auth/token', {
+  const authResponse = await axios.post('https://demandlane-analytics-engineer.recursive-tech.site/auth/token', {
     username: 'candidate',
     password: 'test123'
   });
@@ -233,7 +230,7 @@ async function fetchInvoices() {
   const accessToken = authResponse.data.access_token;
   
   // Fetch invoices
-  const response = await axios.get('http://localhost:8000/invoices/stored', {
+  const response = await axios.get('https://demandlane-analytics-engineer.recursive-tech.site/invoices/stored', {
     headers: {
       'Authorization': `Bearer ${accessToken}`
     },
@@ -312,7 +309,7 @@ fetchInvoices();
 Returns statistics about stored invoices.
 
 ```bash
-curl -X GET "http://localhost:8000/invoices/stats" \
+curl -X GET "https://demandlane-analytics-engineer.recursive-tech.site/invoices/stats" \
   -H "Authorization: Bearer <your_token>"
 ```
 
@@ -331,7 +328,7 @@ curl -X GET "http://localhost:8000/invoices/stats" \
 Check if the API is running (no authentication required).
 
 ```bash
-curl -X GET "http://localhost:8000/health"
+curl -X GET "https://demandlane-analytics-engineer.recursive-tech.site/health"
 ```
 
 **Response:**
@@ -348,7 +345,7 @@ curl -X GET "http://localhost:8000/health"
 Verify if your access token is still valid.
 
 ```bash
-curl -X GET "http://localhost:8000/auth/verify" \
+curl -X GET "https://demandlane-analytics-engineer.recursive-tech.site/auth/verify" \
   -H "Authorization: Bearer <your_token>"
 ```
 
@@ -369,7 +366,7 @@ curl -X GET "http://localhost:8000/auth/verify" \
 Get information about your current authenticated user.
 
 ```bash
-curl -X GET "http://localhost:8000/auth/me" \
+curl -X GET "https://demandlane-analytics-engineer.recursive-tech.site/auth/me" \
   -H "Authorization: Bearer <your_token>"
 ```
 
