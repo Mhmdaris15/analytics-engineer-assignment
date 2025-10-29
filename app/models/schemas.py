@@ -55,6 +55,19 @@ class InvoiceResponse(BaseModel):
     generated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
+class PaginatedInvoiceResponse(BaseModel):
+    """Response model for paginated invoice endpoints."""
+    data: List[EmailInvoice]
+    count: int
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+    has_next: bool
+    has_prev: bool
+    generated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
 class HealthResponse(BaseModel):
     """Health check response."""
     status: str
@@ -69,3 +82,45 @@ class StatsResponse(BaseModel):
     total_invoices: int
     database_type: str
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+
+
+# User authentication models
+class User(BaseModel):
+    """User model for authentication."""
+    username: str
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    disabled: bool = False
+    role: str = "candidate"  # candidate or admin
+
+
+class UserInDB(User):
+    """User model with hashed password (stored in database)."""
+    hashed_password: str
+
+
+class UserCreate(BaseModel):
+    """User registration model."""
+    username: str = Field(..., min_length=3, max_length=50)
+    password: str = Field(..., min_length=6)
+    email: Optional[str] = None
+    full_name: Optional[str] = None
+    role: str = Field(default="candidate", pattern="^(candidate|admin)$")
+
+
+class UserLogin(BaseModel):
+    """User login model."""
+    username: str
+    password: str
+
+
+class Token(BaseModel):
+    """Token response model."""
+    access_token: str
+    token_type: str = "bearer"
+
+
+class TokenData(BaseModel):
+    """Token payload data."""
+    username: Optional[str] = None
+    role: Optional[str] = None

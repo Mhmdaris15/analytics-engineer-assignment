@@ -88,10 +88,34 @@ analytics-engineer-api/
 
 ## 📚 API Endpoints
 
+### 🔐 Authentication
+
+All endpoints (except `/health`) require Bearer Token authentication.
+
+**Login to get access token:**
+```bash
+curl -X POST "http://localhost:8000/auth/token" \
+  -H "Content-Type: application/json" \
+  -d '{"username": "candidate", "password": "test123"}'
+```
+
+**Default Credentials:**
+- **Candidate**: `candidate` / `test123` (read access)
+- **Admin**: `admin` / `admin123` (full access + user management)
+
+**Use token in requests:**
+```bash
+curl -H "Authorization: Bearer <your_token>" http://localhost:8000/invoices
+```
+
+📖 **For detailed authentication guide, see [API_GUIDE.md](API_GUIDE.md)**
+
+---
+
 ### Core Endpoints
 
-#### `GET /`
-Health check and basic information
+#### `GET /health`
+Health check and basic information (no authentication required)
 ```json
 {
   "status": "healthy",
@@ -105,20 +129,21 @@ Health check and basic information
 #### `GET /invoices`
 Generate and return invoice emails with inconsistencies
 
+**Authentication:** Required  
 **Query Parameters:**
 - `count` (optional, 1-20): Number of invoices to generate
 - `store` (optional, boolean): Whether to save to database
 
 **Example:**
-```powershell
+```bash
 # Generate random number of invoices
-curl http://localhost:8000/invoices
+curl -H "Authorization: Bearer <token>" http://localhost:8000/invoices
 
 # Generate exactly 5 invoices
-curl http://localhost:8000/invoices?count=5
+curl -H "Authorization: Bearer <token>" http://localhost:8000/invoices?count=5
 
 # Generate and store 3 invoices
-curl "http://localhost:8000/invoices?count=3&store=true"
+curl -H "Authorization: Bearer <token>" "http://localhost:8000/invoices?count=3&store=true"
 ```
 
 **Response:**
@@ -147,14 +172,23 @@ curl "http://localhost:8000/invoices?count=3&store=true"
 ```
 
 #### `GET /invoices/stored`
-Retrieve all invoices stored in the database
+Retrieve stored invoices with pagination
+
+**Authentication:** Required  
+**Rate Limit:** 30 requests/minute  
+**Query Parameters:**
+- `page` (optional, default: 1): Page number
+- `page_size` (optional, default: 100, max: 500): Items per page
 
 #### `DELETE /invoices/stored`
 Clear all stored invoices from the database
 
+**Authentication:** Required
+
 #### `GET /invoices/stats`
 Get statistics about stored invoices
 
+**Authentication:** Required  
 **Response:**
 ```json
 {
@@ -166,6 +200,8 @@ Get statistics about stored invoices
 
 #### `POST /invoices/seed`
 Seed the database with a batch of invoices
+
+**Authentication:** Required
 
 **Query Parameters:**
 - `count` (optional, 1-100): Number of invoices to seed (default: 10)

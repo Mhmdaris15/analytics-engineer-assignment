@@ -29,6 +29,11 @@ class DatabaseInterface(ABC):
         pass
     
     @abstractmethod
+    async def get_paginated_invoices(self, skip: int = 0, limit: int = 100) -> List[Dict[str, Any]]:
+        """Retrieve paginated invoices from the database."""
+        pass
+    
+    @abstractmethod
     async def get_invoice_count(self) -> int:
         """Get the total count of invoices."""
         pass
@@ -92,6 +97,11 @@ class JSONDatabase(DatabaseInterface):
         """Get all invoices from JSON file."""
         return self._read_data()
     
+    async def get_paginated_invoices(self, skip: int = 0, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get paginated invoices from JSON file."""
+        data = self._read_data()
+        return data[skip:skip + limit]
+    
     async def get_invoice_count(self) -> int:
         """Get count of invoices in JSON file."""
         data = self._read_data()
@@ -147,6 +157,22 @@ class MongoDatabase(DatabaseInterface):
         try:
             cursor = self.collection.find({})
             invoices = await cursor.to_list(length=None)
+            
+            # Convert ObjectId to string for JSON serialization
+            for invoice in invoices:
+                if '_id' in invoice:
+                    invoice['_id'] = str(invoice['_id'])
+            
+            return invoices
+        except Exception as e:
+            print(f"Error reading from MongoDB: {e}")
+            return []
+    
+    async def get_paginated_invoices(self, skip: int = 0, limit: int = 100) -> List[Dict[str, Any]]:
+        """Get paginated invoices from MongoDB."""
+        try:
+            cursor = self.collection.find({}).skip(skip).limit(limit)
+            invoices = await cursor.to_list(length=limit)
             
             # Convert ObjectId to string for JSON serialization
             for invoice in invoices:
